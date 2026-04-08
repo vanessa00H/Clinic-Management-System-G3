@@ -1,9 +1,9 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="Clinic_Management_System.Login" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Register.aspx.cs" Inherits="Clinic_Management_System.Register" %>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Clinic System - Login</title>
+    <title>Clinic System - Register</title>
     <style>
         * {
             box-sizing: border-box;
@@ -65,7 +65,7 @@
             padding: 20px;
         }
 
-        .login-card {
+        .register-card {
             width: 420px;
             padding: 35px 30px;
             border-radius: 24px;
@@ -133,7 +133,7 @@
             box-shadow: 0 0 0 3px rgba(255,255,255,0.25);
         }
 
-        .btn-login {
+        .btn-register {
             width: 100%;
             padding: 14px;
             margin-top: 10px;
@@ -147,7 +147,7 @@
             transition: 0.25s ease;
         }
 
-        .btn-login:hover {
+        .btn-register:hover {
             transform: translateY(-1px);
             box-shadow: 0 8px 18px rgba(37,99,235,0.35);
         }
@@ -180,10 +180,11 @@
             color: #dbeafe;
             font-size: 12px;
             margin-top: 16px;
+            line-height: 1.6;
         }
 
         @media (max-width: 500px) {
-            .login-card {
+            .register-card {
                 width: 100%;
                 padding: 28px 20px;
             }
@@ -203,28 +204,29 @@
 
     <form id="form1" runat="server">
         <div class="main-container">
-            <div class="login-card">
+            <div class="register-card">
                 <div class="logo-circle">+</div>
 
                 <div class="system-title">Clinic Appointment and Patient Management System</div>
-                <div class="system-subtitle">Secure login to access appointments and clinic services</div>
+                <div class="system-subtitle">Create a new account to access clinic services</div>
 
                 <label class="input-label">Username</label>
-                <asp:TextBox ID="txtUsername" runat="server" CssClass="textbox"></asp:TextBox>
+                <asp:TextBox ID="txtNewUsername" runat="server" CssClass="textbox"></asp:TextBox>
 
                 <label class="input-label">Password</label>
-                <asp:TextBox ID="txtPassword" runat="server" TextMode="Password" CssClass="textbox"></asp:TextBox>
+                <asp:TextBox ID="txtNewPassword" runat="server" TextMode="Password" CssClass="textbox"></asp:TextBox>
 
-                <asp:Button ID="btnLogin" runat="server" Text="Login" CssClass="btn-login" OnClick="btnLogin_Click" />
+                <asp:Button ID="btnRegister" runat="server" Text="Register" CssClass="btn-register" OnClick="btnRegister_Click" />
 
-                <asp:Label ID="lblMessage" runat="server" CssClass="message" ForeColor="#ffe4e6"></asp:Label>
+                <asp:Label ID="lblRegisterMessage" runat="server" CssClass="message"></asp:Label>
 
                 <div class="extra-links">
-                    <a href="Register.aspx">Create new account</a>
+                    <a href="Login.aspx">Back to login</a>
                 </div>
 
                 <div class="hint-text">
-                    Enter your username and password to continue
+                    Username: letters only<br />
+                    Password: at least 6 characters, with letters, numbers, and underscore (_) only
                 </div>
             </div>
         </div>

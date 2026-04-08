@@ -1,0 +1,1 @@
+﻿DELETE FROM Users WHERE UserID IN(2,3,4,5,6);
