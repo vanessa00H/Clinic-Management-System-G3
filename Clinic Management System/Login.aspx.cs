@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Web.UI;
 
 namespace Clinic_Management_System
 {
@@ -9,7 +8,6 @@ namespace Clinic_Management_System
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
         }
 
         protected void btnLogin_Click(object sender, EventArgs e)
@@ -18,7 +16,7 @@ namespace Clinic_Management_System
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = "SELECT * FROM dbo.Users WHERE Username=@Username AND Password=@Password";
+                string query = "SELECT Username, Role FROM dbo.Users WHERE Username=@Username AND Password=@Password";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Username", txtUsername.Text);
@@ -29,7 +27,8 @@ namespace Clinic_Management_System
 
                 if (reader.Read())
                 {
-                    Session["Username"] = txtUsername.Text;
+                    Session["Username"] = reader["Username"].ToString();
+                    Session["Role"] = reader["Role"].ToString();
                     Response.Redirect("Dashboard.aspx");
                 }
                 else

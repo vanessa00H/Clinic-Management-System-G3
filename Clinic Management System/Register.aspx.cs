@@ -77,10 +77,11 @@ namespace Clinic_Management_System
                     return;
                 }
 
-                string insertQuery = "INSERT INTO dbo.Users (Username, Password) VALUES (@Username, @Password)";
+                string insertQuery = "INSERT INTO dbo.Users (Username, Password,Role) VALUES (@Username, @Password,@Role)";
                 SqlCommand insertCmd = new SqlCommand(insertQuery, conn);
                 insertCmd.Parameters.AddWithValue("@Username", username);
                 insertCmd.Parameters.AddWithValue("@Password", password);
+                insertCmd.Parameters.AddWithValue("@Role", "Patient");
 
                 int rows = insertCmd.ExecuteNonQuery();
 

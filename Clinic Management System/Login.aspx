@@ -217,10 +217,10 @@
 
                 <asp:Button ID="btnLogin" runat="server" Text="Login" CssClass="btn-login" OnClick="btnLogin_Click" />
 
-                <asp:Label ID="lblMessage" runat="server" CssClass="message" ForeColor="#ffe4e6"></asp:Label>
+                <asp:Label ID="lblMessage" runat="server" CssClass="message" ForeColor="Red"></asp:Label>
 
                 <div class="extra-links">
-                    <a href="Register.aspx">Create new account</a>
+                    <a href="Register.aspx">Create new Patient account</a>
                 </div>
 
                 <div class="hint-text">

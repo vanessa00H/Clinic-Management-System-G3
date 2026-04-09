@@ -12,6 +12,52 @@ namespace Clinic_Management_System
             }
 
             lblUsername.Text = Session["Username"].ToString();
+
+            if (!IsPostBack)
+            {
+                string role = Session["Role"].ToString();
+
+                cardBook.Visible = false;
+                cardView.Visible = false;
+                cardStatus.Visible = false;
+                cardFilter.Visible = false;
+                cardDoctors.Visible = false;
+                cardSchedule.Visible = false;
+                cardFees.Visible = false;
+                cardNotes.Visible = false;
+                cardNotifications.Visible = false;
+
+                if (role == "Admin")
+                {
+                    cardBook.Visible = true;
+                    cardView.Visible = true;
+                    cardStatus.Visible = true;
+                    cardFilter.Visible = true;
+                    cardDoctors.Visible = true;
+                    cardSchedule.Visible = true;
+                    cardFees.Visible = true;
+                    cardNotes.Visible = true;
+                    cardNotifications.Visible = true;
+                }
+                else if (role == "Patient")
+                {
+                    cardBook.Visible = true;
+                    cardView.Visible = true;
+                }
+                else if (role == "Doctor")
+                {
+                    cardView.Visible = true;
+                    cardSchedule.Visible = true;
+                    cardNotes.Visible = true;
+                }
+                else if (role == "Receptionist")
+                {
+                    cardBook.Visible = true;
+                    cardView.Visible = true;
+                    cardStatus.Visible = true;
+                    cardFilter.Visible = true;
+                }
+            }
         }
 
         protected void btnLogout_Click(object sender, EventArgs e)

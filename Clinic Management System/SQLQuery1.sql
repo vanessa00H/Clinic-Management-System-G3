@@ -1,0 +1,2 @@
+﻿ALTER TABLE Users
+ADD Role NVARCHAR(50);

@@ -164,7 +164,7 @@
 
             <div class="cards-container">
 
-                <div class="card">
+                <div id="cardBook" runat="server" class="card">
                     <div class="card-title">Book Appointment</div>
                     <div class="card-text">
                         Create a new appointment with patient details, doctor, department, date, time, status, and additional services.
@@ -172,7 +172,7 @@
                     <a href="BookAppointment.aspx">Open</a>
                 </div>
 
-                <div class="card">
+                <div id="cardView" runat="server" class="card">
                     <div class="card-title">View & Manage Appointments</div>
                     <div class="card-text">
                         View appointment details, update patient data, edit doctor/date/time, cancel, or delete appointments.
@@ -180,7 +180,7 @@
                     <a href="ViewAppointments.aspx">Open</a>
                 </div>
 
-                <div class="card">
+                <div id="cardStatus" runat="server" class="card">
                     <div class="card-title">Appointment Status</div>
                     <div class="card-text">
                         Manage appointment states such as Pending, Confirmed, In Consultation, Completed, and Cancelled.
@@ -188,7 +188,7 @@
                     <a href="AppointmentStatus.aspx">Open</a>
                 </div>
 
-                <div class="card">
+                <div id="cardFilter" runat="server" class="card">
                     <div class="card-title">Sorting & Filtering</div>
                     <div class="card-text">
                         Sort by date, doctor, or status, and filter by doctor, department, date range, and appointment status.
@@ -196,7 +196,7 @@
                     <a href="AppointmentFilter.aspx">Open</a>
                 </div>
 
-                <div class="card">
+                <div id="cardDoctors" runat="server" class="card">
                     <div class="card-title">Manage Doctors & Services</div>
                     <div class="card-text">
                         Add, update, or remove doctors and clinic services with specialty, consultation fee, and availability details.
@@ -204,7 +204,7 @@
                     <a href="ManageDoctors.aspx">Open</a>
                 </div>
 
-                <div class="card">
+                <div id="cardSchedule" runat="server" class="card">
                     <div class="card-title">Doctor Schedule & Availability</div>
                     <div class="card-text">
                         Manage doctor schedules, available slots, unavailable periods, leave, emergencies, and schedule changes.
@@ -212,7 +212,7 @@
                     <a href="DoctorSchedule.aspx">Open</a>
                 </div>
 
-                <div class="card">
+                <div id="cardFees" runat="server" class="card">
                     <div class="card-title">Consultation Fees</div>
                     <div class="card-text">
                         Manage consultation fees by specialization, appointment type, and bundled or follow-up services.
@@ -220,7 +220,7 @@
                     <a href="ConsultationFees.aspx">Open</a>
                 </div>
 
-                <div class="card">
+                <div id="cardNotes" runat="server" class="card">
                     <div class="card-title">Appointment Notes</div>
                     <div class="card-text">
                         Add and display internal notes such as symptoms, special instructions, and patient preferences.
@@ -228,7 +228,7 @@
                     <a href="AppointmentNotes.aspx">Open</a>
                 </div>
 
-                <div class="card">
+                <div id="cardNotifications" runat="server" class="card">
                     <div class="card-title">Notifications</div>
                     <div class="card-text">
                         Send confirmation, reminder, reschedule, and completion notifications to patients by email.
