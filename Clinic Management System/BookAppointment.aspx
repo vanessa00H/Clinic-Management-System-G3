@@ -238,14 +238,17 @@
 <asp:Label ID="lblDoctorError" runat="server" CssClass="field-message"></asp:Label>
                     </div>
 
-                    <div>
-             <label class="label">Department</label>
-<asp:TextBox ID="txtDepartment" runat="server" CssClass="textbox" ReadOnly="true"></asp:TextBox>
-<asp:Label ID="lblDepartmentError" runat="server" CssClass="field-message"></asp:Label>
-                    </div>
-                    <label class="label">Consultation Fee</label>
-<asp:TextBox ID="txtConsultationFee" runat="server" CssClass="textbox" ReadOnly="true"></asp:TextBox>
-<asp:Label ID="lblFeeError" runat="server" CssClass="field-message"></asp:Label>
+<div>
+    <label class="label">Department</label>
+    <asp:TextBox ID="txtDepartment" runat="server" CssClass="textbox" ReadOnly="true"></asp:TextBox>
+    <asp:Label ID="lblDepartmentError" runat="server" CssClass="field-message"></asp:Label>
+</div>
+
+<div>
+    <label class="label">Consultation Fee</label>
+    <asp:TextBox ID="txtConsultationFee" runat="server" CssClass="textbox" ReadOnly="true"></asp:TextBox>
+    <asp:Label ID="lblFeeError" runat="server" CssClass="field-message"></asp:Label>
+</div>
 
                     <div>
                         <label class="label">Appointment Type</label>
@@ -272,7 +275,7 @@
 
                 <asp:Label ID="lblMessage" runat="server" CssClass="message"></asp:Label>
 
-                <a class="back-link" href="Dashboard.aspx">Back to Dashboard</a>
+                <a class="back-link" href="Dashboard.aspx">Back to Home Page</a>
 
                 <div class="hint">
                     Required: name, email, phone, date, time, doctor, department, appointment type.<br />
