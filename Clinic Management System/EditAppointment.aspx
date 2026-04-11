@@ -1,6 +1,13 @@
 <%@ Page Language="C#" AutoEventWireup="true" 
     CodeBehind="EditAppointment.aspx.cs" 
     Inherits="Clinic_Management_System.EditAppointment" %>
+<script>
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    };
+</script>
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">

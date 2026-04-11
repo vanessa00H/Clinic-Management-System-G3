@@ -49,6 +49,9 @@
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/">Home</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/About">About</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Contact">Contact</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/BookAppointment">Book Appointment</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/ViewAppointments">View Appointments</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/DoctorSchedule">Doctor Schedule</a></li>
                     </ul>
                 </div>
             </div>

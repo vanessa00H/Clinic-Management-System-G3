@@ -131,21 +131,89 @@
         }
 
         .back-link:hover { text-decoration: underline; }
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar {
+           display: flex;
+           gap: 12px;
+           margin-bottom: 20px;
+           flex-wrap: wrap;
+           align-items: center;
+}
+
+        .filter-bar select, .filter-bar input {
+           padding: 13px;
+           border-radius: 14px;
+           border: none;
+           background: rgba(255,255,255,0.18);
+           color: white;
+           font-size: 14px;
+          backdrop-filter: blur(8px);
+}
+
+        .filter-bar select option {
+          color: #0f172a;
+}
+
+        .filter-btn {
+          padding: 13px 24px;
+          border-radius: 14px;
+          border: none;
+          background: linear-gradient(90deg, #06b6d4, #2563eb);
+          color: white;
+          font-weight: 700;
+          cursor: pointer;
+          font-size: 14px;
+}
     </style>
 </head>
 <body>
+    
     <div class="background-circles">
         <div class="circle circle1"></div>
         <div class="circle circle2"></div>
         <div class="circle circle3"></div>
     </div>
+    
 
     <form id="form1" runat="server">
         <div class="main-container">
             <div class="card">
                 <div class="title">View Appointments</div>
                 <div class="subtitle">All clinic appointments</div>
+                
+     
+           <div class="filter-bar">
+    <asp:DropDownList ID="ddlFilterStatus" runat="server">
+        <asp:ListItem Text="All Status" Value=""/>
+        <asp:ListItem Text="Pending" Value="Pending"/>
+        <asp:ListItem Text="Confirmed" Value="Confirmed"/>
+        <asp:ListItem Text="In Consultation" Value="In Consultation"/>
+        <asp:ListItem Text="Completed" Value="Completed"/>
+        <asp:ListItem Text="Cancelled" Value="Cancelled"/>
+    </asp:DropDownList>
 
+    <asp:DropDownList ID="ddlFilterDoctor" runat="server">
+    </asp:DropDownList>
+
+    <asp:TextBox ID="txtFromDate" runat="server" TextMode="Date"/>
+
+    <asp:DropDownList ID="ddlSort" runat="server">
+        <asp:ListItem Text="Sort by Date" Value="AppointmentDate"/>
+        <asp:ListItem Text="Sort by Doctor" Value="DoctorName"/>
+        <asp:ListItem Text="Sort by Status" Value="Status"/>
+    </asp:DropDownList>
+
+    <asp:Button ID="btnFilter" runat="server" Text="Filter" 
+        CssClass="filter-btn" OnClick="btnFilter_Click"/>
+    <asp:Button ID="btnReset" runat="server" Text="Reset" 
+        CssClass="filter-btn" OnClick="btnReset_Click"/>
+</div>
                 <asp:GridView ID="gvAppointments" runat="server"
     AutoGenerateColumns="False"
     CssClass="grid"
