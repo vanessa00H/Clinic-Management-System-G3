@@ -59,7 +59,10 @@ namespace Clinic_Management_System
                 }
             }
         }
-
+        protected void btnOpenSchedule_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("DoctorSchedule.aspx");
+        }
         protected void btnLogout_Click(object sender, EventArgs e)
         {
             Session.Clear();

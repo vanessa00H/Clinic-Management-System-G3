@@ -48,7 +48,12 @@ namespace Clinic_Management_System
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
+
                 string query = "SELECT * FROM Appointments WHERE 1=1";
+
+                string role = Session["Role"]?.ToString().ToLower() ?? "";
+                string currentUser = Session["Username"].ToString();
+
 
                 if (!string.IsNullOrEmpty(status))
                     query += " AND Status=@Status";
@@ -62,6 +67,12 @@ namespace Clinic_Management_System
                 query += " ORDER BY " + sortBy;
 
                 SqlCommand cmd = new SqlCommand(query, conn);
+             
+
+                if (currentUser.ToLower() != "admin")
+                {
+                    cmd.Parameters.AddWithValue("@CurrentUser", currentUser);
+                }
 
                 if (!string.IsNullOrEmpty(status))
                     cmd.Parameters.AddWithValue("@Status", status);

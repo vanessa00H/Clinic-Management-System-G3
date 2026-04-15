@@ -185,7 +185,7 @@
                     <div class="card-text">
                         Manage appointment states such as Pending, Confirmed, In Consultation, Completed, and Cancelled.
                     </div>
-                    <a href="AppointmentStatus.aspx">Open</a>
+                    <a href="ViewAppointments.aspx">Open</a>
                 </div>
 
                 <div id="cardFilter" runat="server" class="card">
@@ -217,7 +217,7 @@
                     <div class="card-text">
                         Manage consultation fees by specialization, appointment type, and bundled or follow-up services.
                     </div>
-                    <a href="ConsultationFees.aspx">Open</a>
+                    <a href="DoctorSchedule.aspx">Open</a>
                 </div>
 
                 <div id="cardNotes" runat="server" class="card">

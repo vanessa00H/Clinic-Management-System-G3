@@ -113,12 +113,7 @@ namespace Clinic_Management_System
                 isValid = false;
             }
 
-            // Department
-            if (string.IsNullOrWhiteSpace(department))
-            {
-                lblDepartmentError.Text = "Please select a department.";
-                isValid = false;
-            }
+          
 
             // Appointment Type
             if (string.IsNullOrWhiteSpace(appointmentType))

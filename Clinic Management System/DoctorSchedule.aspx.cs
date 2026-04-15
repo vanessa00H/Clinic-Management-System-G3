@@ -11,9 +11,13 @@ namespace Clinic_Management_System
         {
             if (Session["Username"] == null)
                 Response.Redirect("Login.aspx");
+            string role = Session["Role"]?.ToString() ?? "";
 
-            if (Session["Role"].ToString() != "Admin")
+         
+            if (role != "Admin" && role.ToLower() != "doctor")
+            {
                 Response.Redirect("Dashboard.aspx");
+            }
 
             if (!IsPostBack)
                 LoadDoctors();
