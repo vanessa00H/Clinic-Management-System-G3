@@ -96,6 +96,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ManageDoctors.aspx" />
     <Content Include="About.aspx" />
     <Content Include="AppointmentNotes.aspx" />
     <Content Include="BookAppointment.aspx" />
@@ -189,6 +190,13 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ManageDoctors.aspx.cs">
+      <DependentUpon>ManageDoctors.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ManageDoctors.aspx.designer.cs">
+      <DependentUpon>ManageDoctors.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AppointmentNotes.aspx.cs">
       <DependentUpon>AppointmentNotes.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

@@ -2,6 +2,7 @@ using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Net.NetworkInformation;
 
 namespace Clinic_Management_System
 {
@@ -43,45 +44,46 @@ namespace Clinic_Management_System
         private void LoadAppointments(string status = "", string doctor = "",
             string fromDate = "", string toDate = "", string sortBy = "AppointmentDate")
         {
-            string connStr = ConfigurationManager
-                .ConnectionStrings["ClinicDBConnection"].ConnectionString;
+            string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-
                 string query = "SELECT * FROM Appointments WHERE 1=1";
-
                 string role = Session["Role"]?.ToString().ToLower() ?? "";
                 string currentUser = Session["Username"].ToString();
 
+                // 🌟 توزيع الصلاحيات الذكي 🌟
+                if (role == "doctor")
+                {
+                    // الدكتور يشوف بس المواعيد اللي باسمه
+                    query += " AND DoctorName = @CurrentUser";
+                }
+                else if (role == "patient")
+                {
+                    // المريض يشوف بس مواعيده هو
+                    query += " AND PatientName = @CurrentUser";
+                }
+                // ملاحظة: لو كان الدور "admin" أو "receptionist" ما راح يضيف أي شرط (بيشوفون كل شيء)
 
-                if (!string.IsNullOrEmpty(status))
-                    query += " AND Status=@Status";
-                if (!string.IsNullOrEmpty(doctor))
-                    query += " AND DoctorName=@Doctor";
-                if (!string.IsNullOrEmpty(fromDate))
-                    query += " AND AppointmentDate >= @FromDate";
-                if (!string.IsNullOrEmpty(toDate))
-                    query += " AND AppointmentDate <= @ToDate";
+                if (!string.IsNullOrEmpty(status)) query += " AND Status=@Status";
+                if (!string.IsNullOrEmpty(doctor)) query += " AND DoctorName=@Doctor";
+                if (!string.IsNullOrEmpty(fromDate)) query += " AND AppointmentDate >= @FromDate";
+                if (!string.IsNullOrEmpty(toDate)) query += " AND AppointmentDate <= @ToDate";
 
                 query += " ORDER BY " + sortBy;
 
                 SqlCommand cmd = new SqlCommand(query, conn);
-             
 
-                if (currentUser.ToLower() != "admin")
+                // تمرير اسم المستخدم الحالي لو كان دكتور أو مريض
+                if (role == "doctor" || role == "patient")
                 {
                     cmd.Parameters.AddWithValue("@CurrentUser", currentUser);
                 }
 
-                if (!string.IsNullOrEmpty(status))
-                    cmd.Parameters.AddWithValue("@Status", status);
-                if (!string.IsNullOrEmpty(doctor))
-                    cmd.Parameters.AddWithValue("@Doctor", doctor);
-                if (!string.IsNullOrEmpty(fromDate))
-                    cmd.Parameters.AddWithValue("@FromDate", fromDate);
-                if (!string.IsNullOrEmpty(toDate))
-                    cmd.Parameters.AddWithValue("@ToDate", toDate);
+                if (!string.IsNullOrEmpty(status)) cmd.Parameters.AddWithValue("@Status", status);
+                if (!string.IsNullOrEmpty(doctor)) cmd.Parameters.AddWithValue("@Doctor", doctor);
+                if (!string.IsNullOrEmpty(fromDate)) cmd.Parameters.AddWithValue("@FromDate", fromDate);
+                if (!string.IsNullOrEmpty(toDate)) cmd.Parameters.AddWithValue("@ToDate", toDate);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();

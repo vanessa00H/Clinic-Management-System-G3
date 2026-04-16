@@ -68,46 +68,7 @@
     <form id="form1" runat="server">
         <div class="main-container">
 
-            <%-- Add Doctor Card --%>
-            <div class="card">
-                <div class="title">Doctor Schedule Management</div>
-                <div class="subtitle">Add or update doctors and availability</div>
-
-                <div class="grid">
-                    <div>
-                        <label class="label">Doctor Name</label>
-                        <asp:TextBox ID="txtDoctorName" runat="server" CssClass="textbox"/>
-                        <asp:Label ID="lblDoctorNameError" runat="server" CssClass="field-message"/>
-                    </div>
-                    <div>
-                        <label class="label">Specialization</label>
-                        <asp:TextBox ID="txtSpecialization" runat="server" CssClass="textbox"/>
-                        <asp:Label ID="lblSpecializationError" runat="server" CssClass="field-message"/>
-                    </div>
-                    <div>
-                        <label class="label">Department</label>
-                        <asp:TextBox ID="txtDepartment" runat="server" CssClass="textbox"/>
-                        <asp:Label ID="lblDepartmentError" runat="server" CssClass="field-message"/>
-                    </div>
-                    <div>
-                        <label class="label">Consultation Fee</label>
-                        <asp:TextBox ID="txtFee" runat="server" CssClass="textbox"/>
-                        <asp:Label ID="lblFeeError" runat="server" CssClass="field-message"/>
-                    </div>
-                    <div>
-                        <label class="label">Availability</label>
-                        <asp:DropDownList ID="ddlAvailable" runat="server" CssClass="dropdown">
-                            <asp:ListItem Text="Available" Value="1"/>
-                            <asp:ListItem Text="Unavailable" Value="0"/>
-                        </asp:DropDownList>
-                    </div>
-                </div>
-
-                <asp:Button ID="btnAdd" runat="server" Text="Add Doctor" 
-                    CssClass="btn" OnClick="btnAdd_Click"/>
-                <asp:Label ID="lblMessage" runat="server" CssClass="message"/>
-            </div>
-
+           
             <%-- Doctors List Card --%>
             <div class="card">
                 <div class="title">Doctors List</div>
@@ -125,13 +86,7 @@
                         <asp:BoundField DataField="IsAvailable" HeaderText="Available"/>
                         <asp:TemplateField HeaderText="Actions">
                             <ItemTemplate>
-                                <asp:LinkButton CommandName="DeleteDoc"
-                                    CommandArgument='<%# Eval("DoctorID") %>'
-                                    runat="server"
-                                    Style="color:#f87171; font-weight:700;"
-                                    OnClientClick="return confirm('Delete this doctor?');">
-                                    Delete
-                                </asp:LinkButton>
+                                
                                 <asp:LinkButton CommandName="ToggleDoc"
                                     CommandArgument='<%# Eval("DoctorID") %>'
                                     runat="server"

@@ -180,21 +180,7 @@
                     <a href="ViewAppointments.aspx">Open</a>
                 </div>
 
-                <div id="cardStatus" runat="server" class="card">
-                    <div class="card-title">Appointment Status</div>
-                    <div class="card-text">
-                        Manage appointment states such as Pending, Confirmed, In Consultation, Completed, and Cancelled.
-                    </div>
-                    <a href="ViewAppointments.aspx">Open</a>
-                </div>
-
-                <div id="cardFilter" runat="server" class="card">
-                    <div class="card-title">Sorting & Filtering</div>
-                    <div class="card-text">
-                        Sort by date, doctor, or status, and filter by doctor, department, date range, and appointment status.
-                    </div>
-                    <a href="AppointmentFilter.aspx">Open</a>
-                </div>
+              
 
                 <div id="cardDoctors" runat="server" class="card">
                     <div class="card-title">Manage Doctors & Services</div>

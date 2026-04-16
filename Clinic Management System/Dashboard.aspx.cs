@@ -19,8 +19,6 @@ namespace Clinic_Management_System
 
                 cardBook.Visible = false;
                 cardView.Visible = false;
-                cardStatus.Visible = false;
-                cardFilter.Visible = false;
                 cardDoctors.Visible = false;
                 cardSchedule.Visible = false;
                 cardFees.Visible = false;
@@ -31,8 +29,6 @@ namespace Clinic_Management_System
                 {
                     cardBook.Visible = true;
                     cardView.Visible = true;
-                    cardStatus.Visible = true;
-                    cardFilter.Visible = true;
                     cardDoctors.Visible = true;
                     cardSchedule.Visible = true;
                     cardFees.Visible = true;
@@ -54,8 +50,7 @@ namespace Clinic_Management_System
                 {
                     cardBook.Visible = true;
                     cardView.Visible = true;
-                    cardStatus.Visible = true;
-                    cardFilter.Visible = true;
+                   
                 }
             }
         }
