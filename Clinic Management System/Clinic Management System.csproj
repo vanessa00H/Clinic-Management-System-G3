@@ -96,6 +96,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ManageFees.aspx" />
+    <Content Include="ConsultationFees.aspx" />
     <Content Include="ManageDoctors.aspx" />
     <Content Include="About.aspx" />
     <Content Include="AppointmentNotes.aspx" />
@@ -190,6 +192,14 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ManageFees.aspx.cs">
+      <DependentUpon>ManageFees.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ConsultationFees.aspx.cs">
+      <DependentUpon>ConsultationFees.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="ManageDoctors.aspx.cs">
       <DependentUpon>ManageDoctors.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

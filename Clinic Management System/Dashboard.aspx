@@ -67,16 +67,16 @@
             text-align: center;
         }
 
-        .dashboard-header h1 {
-            margin: 0;
-            font-size: 34px;
-        }
+            .dashboard-header h1 {
+                margin: 0;
+                font-size: 34px;
+            }
 
-        .dashboard-header p {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #dbeafe;
-        }
+            .dashboard-header p {
+                margin-top: 10px;
+                font-size: 16px;
+                color: #dbeafe;
+            }
 
         .cards-container {
             max-width: 1200px;
@@ -98,9 +98,9 @@
             transition: 0.25s ease;
         }
 
-        .card:hover {
-            transform: translateY(-4px);
-        }
+            .card:hover {
+                transform: translateY(-4px);
+            }
 
         .card-title {
             font-size: 20px;
@@ -143,9 +143,9 @@
             cursor: pointer;
         }
 
-        .logout-btn:hover {
-            background: #b91c1c;
-        }
+            .logout-btn:hover {
+                background: #b91c1c;
+            }
     </style>
 </head>
 <body>
@@ -159,7 +159,8 @@
         <div class="main-container">
             <div class="dashboard-header">
                 <h1>Clinic Appointment and Patient Management System</h1>
-                <p>Welcome, <asp:Label ID="lblUsername" runat="server"></asp:Label></p>
+                <p>Welcome,
+                    <asp:Label ID="lblUsername" runat="server"></asp:Label></p>
             </div>
 
             <div class="cards-container">
@@ -180,7 +181,7 @@
                     <a href="ViewAppointments.aspx">Open</a>
                 </div>
 
-              
+
 
                 <div id="cardDoctors" runat="server" class="card">
                     <div class="card-title">Manage Doctors & Services</div>
@@ -203,7 +204,7 @@
                     <div class="card-text">
                         Manage consultation fees by specialization, appointment type, and bundled or follow-up services.
                     </div>
-                    <a href="DoctorSchedule.aspx">Open</a>
+                    <a href="ConsultationFees.aspx">Open</a>
                 </div>
 
                 <div id="cardNotes" runat="server" class="card">
@@ -221,7 +222,13 @@
                     </div>
                     <a href="Notifications.aspx">Open</a>
                 </div>
-
+                <div id="cardSpecialFees" runat="server" class="card">
+                    <div class="card-title">Special Fees</div>
+                    <div class="card-text">
+                        Set promotional prices and special consultation fees for specific dates or departments.
+                    </div>
+                    <a href="ManageFees.aspx">Open</a>
+                </div>
             </div>
 
             <div class="logout-box">

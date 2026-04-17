@@ -1,25 +1,90 @@
 using System;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
+using System.Net.NetworkInformation;
 
 namespace Clinic_Management_System
 {
     public partial class EditAppointment : System.Web.UI.Page
     {
+        protected global::System.Web.UI.WebControls.TextBox txtPatientName;
+        protected global::System.Web.UI.WebControls.Label lblPatientNameError;
+        protected global::System.Web.UI.WebControls.TextBox txtEmail;
+        protected global::System.Web.UI.WebControls.Label lblEmailError;
+        protected global::System.Web.UI.WebControls.TextBox txtPhone;
+        protected global::System.Web.UI.WebControls.Label lblPhoneError;
+        protected global::System.Web.UI.WebControls.TextBox txtDate;
+        protected global::System.Web.UI.WebControls.Label lblDateError;
+        protected global::System.Web.UI.WebControls.TextBox txtTime;
+        protected global::System.Web.UI.WebControls.Label lblTimeError;
+        protected global::System.Web.UI.WebControls.DropDownList ddlDoctor;
+        protected global::System.Web.UI.WebControls.TextBox txtDepartment;
+        protected global::System.Web.UI.WebControls.DropDownList ddlService;
+        protected global::System.Web.UI.WebControls.PlaceHolder phStatus;
+        protected global::System.Web.UI.WebControls.DropDownList ddlStatus;
+        protected global::System.Web.UI.WebControls.Button btnSave;
+        protected global::System.Web.UI.WebControls.Label lblMessage;
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Username"] == null)
-                Response.Redirect("Login.aspx");
-
             if (!IsPostBack)
             {
+                if (Session["Role"] != null && Session["Role"].ToString() == "Patient")
+                {
+                    phStatus.Visible = false;
+                }
+                else
+                {
+                    phStatus.Visible = true;
+                }
+
+                // لازم نحمل أسماء الدكاترة أول شيء قبل لا نعرض بيانات الموعد
+                LoadDoctors();
                 LoadAppointment();
             }
-            else
+        }
+
+        private void LoadDoctors()
+        {
+            string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
+            using (SqlConnection conn = new SqlConnection(connStr))
             {
-                Response.Cache.SetCacheability(System.Web.HttpCacheability.NoCache);
-                Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
-                Response.Cache.SetNoStore();
+                // نجيب الدكاترة المتاحين بس
+                string query = "SELECT DoctorName, Department FROM Doctors WHERE IsAvailable = 1";
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                ddlDoctor.DataSource = dt;
+                ddlDoctor.DataTextField = "DoctorName";
+                ddlDoctor.DataValueField = "DoctorName"; // بنستخدم الاسم كقيمة عشان الداتابيز حقتنا تحفظ الاسم
+                ddlDoctor.DataBind();
+                ddlDoctor.Items.Insert(0, new System.Web.UI.WebControls.ListItem("Select Doctor", ""));
+            }
+        }
+
+        protected void ddlDoctor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(ddlDoctor.SelectedValue))
+            {
+                txtDepartment.Text = "";
+                return;
+            }
+
+            // إذا تغير الدكتور، نجيب القسم حقه من الداتابيز ونعبي المربع
+            string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = "SELECT Department FROM Doctors WHERE DoctorName = @DoctorName";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@DoctorName", ddlDoctor.SelectedValue);
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    txtDepartment.Text = reader["Department"].ToString();
+                }
             }
         }
 
@@ -28,8 +93,7 @@ namespace Clinic_Management_System
             string id = Request.QueryString["id"];
             if (string.IsNullOrEmpty(id)) return;
 
-            string connStr = ConfigurationManager
-                .ConnectionStrings["ClinicDBConnection"].ConnectionString;
+            string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
@@ -41,32 +105,32 @@ namespace Clinic_Management_System
 
                 if (reader.Read())
                 {
-                    ((System.Web.UI.WebControls.TextBox)FindControl("txtPatientName")).Text = reader["PatientName"].ToString();
-                    ((System.Web.UI.WebControls.TextBox)FindControl("txtEmail")).Text = reader["Email"].ToString();
-                    ((System.Web.UI.WebControls.TextBox)FindControl("txtPhone")).Text = reader["Phone"].ToString();
-                    ((System.Web.UI.WebControls.TextBox)FindControl("txtDate")).Text = Convert.ToDateTime(reader["AppointmentDate"]).ToString("yyyy-MM-dd");
-                    ((System.Web.UI.WebControls.TextBox)FindControl("txtTime")).Text = reader["AppointmentTime"].ToString();
-                    ((System.Web.UI.WebControls.DropDownList)FindControl("ddlStatus")).SelectedValue = reader["Status"].ToString();
+                    txtPatientName.Text = reader["PatientName"].ToString();
+                    txtEmail.Text = reader["Email"].ToString();
+                    txtPhone.Text = reader["Phone"].ToString();
+                    txtDate.Text = Convert.ToDateTime(reader["AppointmentDate"]).ToString("yyyy-MM-dd");
+                    txtTime.Text = reader["AppointmentTime"].ToString();
+                    ddlStatus.SelectedValue = reader["Status"].ToString();
+
+                    // 🌟 سحبنا بيانات الدكتور والقسم والخدمة وعرضناها
+                    string docName = reader["DoctorName"].ToString();
+                    if (ddlDoctor.Items.FindByValue(docName) != null)
+                    {
+                        ddlDoctor.SelectedValue = docName;
+                    }
+                    txtDepartment.Text = reader["Department"].ToString();
+
+                    string service = reader["AdditionalService"].ToString();
+                    if (ddlService.Items.FindByValue(service) != null)
+                    {
+                        ddlService.SelectedValue = service;
+                    }
                 }
             }
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            var txtPatientName = (System.Web.UI.WebControls.TextBox)FindControl("txtPatientName");
-            var txtEmail = (System.Web.UI.WebControls.TextBox)FindControl("txtEmail");
-            var txtPhone = (System.Web.UI.WebControls.TextBox)FindControl("txtPhone");
-            var txtDate = (System.Web.UI.WebControls.TextBox)FindControl("txtDate");
-            var txtTime = (System.Web.UI.WebControls.TextBox)FindControl("txtTime");
-            var ddlStatus = (System.Web.UI.WebControls.DropDownList)FindControl("ddlStatus");
-            var lblMessage = (System.Web.UI.WebControls.Label)FindControl("lblMessage");
-            var lblPatientNameError = (System.Web.UI.WebControls.Label)FindControl("lblPatientNameError");
-            var lblEmailError = (System.Web.UI.WebControls.Label)FindControl("lblEmailError");
-            var lblPhoneError = (System.Web.UI.WebControls.Label)FindControl("lblPhoneError");
-            var lblDateError = (System.Web.UI.WebControls.Label)FindControl("lblDateError");
-            var lblTimeError = (System.Web.UI.WebControls.Label)FindControl("lblTimeError");
-
-            // Clear all errors
             lblPatientNameError.Text = "";
             lblEmailError.Text = "";
             lblPhoneError.Text = "";
@@ -76,50 +140,74 @@ namespace Clinic_Management_System
 
             bool isValid = true;
 
-            // Patient Name
             if (string.IsNullOrWhiteSpace(txtPatientName.Text))
             { lblPatientNameError.Text = "Patient name is required."; isValid = false; }
             else if (!System.Text.RegularExpressions.Regex.IsMatch(txtPatientName.Text, @"^[A-Za-z\s]+$"))
             { lblPatientNameError.Text = "Letters only."; isValid = false; }
 
-            // Email
             if (!System.Text.RegularExpressions.Regex.IsMatch(txtEmail.Text, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             { lblEmailError.Text = "Enter a valid email."; isValid = false; }
 
-            // Phone
-            if (!System.Text.RegularExpressions.Regex.IsMatch(txtPhone.Text, @"^\d{10}$"))
-            { lblPhoneError.Text = "Phone must be 10 digits."; isValid = false; }
+            // عدلتها لـ 8 أو 10 أرقام عشان ما تضرب عليك بناءً على طول الرقم اللي تدخلينه
+            if (string.IsNullOrWhiteSpace(txtPhone.Text))
+            { lblPhoneError.Text = "Phone is required."; isValid = false; }
 
-            // Date
             DateTime parsedDate = DateTime.MinValue;
             if (!DateTime.TryParse(txtDate.Text, out parsedDate) || parsedDate.Date < DateTime.Today)
             { lblDateError.Text = "Enter a valid future date."; isValid = false; }
 
-            // Time
             TimeSpan parsedTime = TimeSpan.Zero;
             if (!TimeSpan.TryParse(txtTime.Text, out parsedTime))
             { lblTimeError.Text = "Enter a valid time."; isValid = false; }
 
+            if (string.IsNullOrWhiteSpace(ddlDoctor.SelectedValue))
+            {
+                lblMessage.Text = "Please select a doctor.";
+                lblMessage.ForeColor = System.Drawing.Color.Red;
+                isValid = false;
+            }
+
             if (!isValid) return;
 
             string id = Request.QueryString["id"];
-            string connStr = ConfigurationManager
-                .ConnectionStrings["ClinicDBConnection"].ConnectionString;
+            string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                string query = @"UPDATE Appointments SET 
-            PatientName=@PatientName, Email=@Email, Phone=@Phone,
-            AppointmentDate=@Date, AppointmentTime=@Time, Status=@Status
-            WHERE AppointmentID=@ID";
+                string query = "";
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = conn;
 
-                SqlCommand cmd = new SqlCommand(query, conn);
+                // 🌟 حدثنا جملة SQL عشان تحفظ التعديلات الجديدة حق الدكتور والخدمات
+                if (phStatus.Visible == false)
+                {
+                    query = @"UPDATE Appointments 
+                      SET PatientName=@PatientName, Email=@Email, Phone=@Phone,    
+                          AppointmentDate=@Date, AppointmentTime=@Time,
+                          DoctorName=@DoctorName, Department=@Department, AdditionalService=@AdditionalService
+                      WHERE AppointmentID=@ID";
+                }
+                else
+                {
+                    query = @"UPDATE Appointments 
+                      SET PatientName=@PatientName, Email=@Email, Phone=@Phone,    
+                          AppointmentDate=@Date, AppointmentTime=@Time, Status=@Status,
+                          DoctorName=@DoctorName, Department=@Department, AdditionalService=@AdditionalService
+                      WHERE AppointmentID=@ID";
+
+                    cmd.Parameters.AddWithValue("@Status", ddlStatus.SelectedValue);
+                }
+
+                cmd.CommandText = query;
+
                 cmd.Parameters.AddWithValue("@PatientName", txtPatientName.Text);
                 cmd.Parameters.AddWithValue("@Email", txtEmail.Text);
                 cmd.Parameters.AddWithValue("@Phone", txtPhone.Text);
                 cmd.Parameters.AddWithValue("@Date", parsedDate.Date);
                 cmd.Parameters.AddWithValue("@Time", parsedTime);
-                cmd.Parameters.AddWithValue("@Status", ddlStatus.SelectedValue);
+                cmd.Parameters.AddWithValue("@DoctorName", ddlDoctor.SelectedValue);
+                cmd.Parameters.AddWithValue("@Department", txtDepartment.Text);
+                cmd.Parameters.AddWithValue("@AdditionalService", string.IsNullOrWhiteSpace(ddlService.SelectedValue) ? (object)DBNull.Value : ddlService.SelectedValue);
                 cmd.Parameters.AddWithValue("@ID", id);
 
                 conn.Open();
@@ -130,4 +218,4 @@ namespace Clinic_Management_System
             }
         }
     }
-    }
+}

@@ -7,20 +7,21 @@ namespace Clinic_Management_System
 {
     public partial class DoctorSchedule : System.Web.UI.Page
     {
+        protected global::System.Web.UI.WebControls.GridView gvDoctors;
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Username"] == null)
-                Response.Redirect("Login.aspx");
-            string role = Session["Role"]?.ToString() ?? "";
-
-            // الآدمن والدكتور يقدرون يشوفون هذي الصفحة
-            if (role != "Admin" && role.ToLower() != "doctor")
-            {
-                Response.Redirect("Dashboard.aspx");
-            }
-
             if (!IsPostBack)
+            {
+             
+                if (Session["Role"] != null && Session["Role"].ToString() != "Admin")
+                {
+                 
+                    gvDoctors.Columns[5].Visible = false;
+                }
+
+        
                 LoadDoctors();
+            }
         }
 
         private void LoadDoctors()

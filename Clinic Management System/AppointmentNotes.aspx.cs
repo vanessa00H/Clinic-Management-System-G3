@@ -7,14 +7,28 @@ namespace Clinic_Management_System
 {
     public partial class AppointmentNotes : System.Web.UI.Page
     {
+        protected global::System.Web.UI.WebControls.DropDownList ddlAppointment;
+        protected global::System.Web.UI.WebControls.Label lblAppointmentError;
+        protected global::System.Web.UI.WebControls.TextBox txtNote;
+        protected global::System.Web.UI.WebControls.Label lblNoteError;
+        protected global::System.Web.UI.WebControls.Button btnSave;
+        protected global::System.Web.UI.WebControls.Label lblMessage;
+        protected global::System.Web.UI.WebControls.GridView gvNotes;
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["Username"] == null)
+            if (Session["Username"] == null || Session["Role"] == null)
+            {
                 Response.Redirect("Login.aspx");
+                return;
+            }
 
-            string role = Session["Role"].ToString();
-            if (role != "Admin" && role != "Doctor")
+            // 🛡️ تأمين الأدوار (نحولها لحروف صغيرة عشان نتجنب مشاكل الـ Capitalization)
+            string role = Session["Role"].ToString().ToLower();
+            if (role != "admin" && role != "doctor")
+            {
                 Response.Redirect("Dashboard.aspx");
+                return;
+            }
 
             if (!IsPostBack)
             {
@@ -25,80 +39,101 @@ namespace Clinic_Management_System
 
         private void LoadAppointments()
         {
-            string connStr = ConfigurationManager
-                .ConnectionStrings["ClinicDBConnection"].ConnectionString;
+            string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
+                // جملة استعلام ذكية تدمج البيانات للعرض
                 string query = "SELECT AppointmentID, PatientName + ' - ' + DoctorName + ' (' + CONVERT(VARCHAR, AppointmentDate, 103) + ')' AS Display FROM Appointments";
-                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+
+                // 🌟 إضافة: إذا كان دكتور، يشوف بس مرضاه
+                if (Session["Role"].ToString().ToLower() == "doctor")
+                {
+                    query += " WHERE DoctorName = @DocName";
+                }
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                if (Session["Role"].ToString().ToLower() == "doctor")
+                {
+                    cmd.Parameters.AddWithValue("@DocName", Session["Username"].ToString());
+                }
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
-                var ddl = (System.Web.UI.WebControls.DropDownList)FindControl("ddlAppointment");
-                ddl.DataSource = dt;
-                ddl.DataTextField = "Display";
-                ddl.DataValueField = "AppointmentID";
-                ddl.DataBind();
-                ddl.Items.Insert(0, new System.Web.UI.WebControls.ListItem("Select Appointment", ""));
+                ddlAppointment.DataSource = dt;
+                ddlAppointment.DataTextField = "Display";
+                ddlAppointment.DataValueField = "AppointmentID";
+                ddlAppointment.DataBind();
+                ddlAppointment.Items.Insert(0, new System.Web.UI.WebControls.ListItem("Select Appointment", ""));
             }
         }
 
         private void LoadNotes()
         {
-            string connStr = ConfigurationManager
-                .ConnectionStrings["ClinicDBConnection"].ConnectionString;
-
+            string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = "SELECT PatientName, DoctorName, AppointmentDate, Notes FROM Appointments WHERE Notes IS NOT NULL AND Notes != ''";
-                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+
+                // 🌟 إضافة: الدكتور يشوف ملاحظاته هو بس
+                if (Session["Role"].ToString().ToLower() == "doctor")
+                {
+                    query += " AND DoctorName = @DocName";
+                }
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                if (Session["Role"].ToString().ToLower() == "doctor")
+                {
+                    cmd.Parameters.AddWithValue("@DocName", Session["Username"].ToString());
+                }
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
-                var gv = (System.Web.UI.WebControls.GridView)FindControl("gvNotes");
-                gv.DataSource = dt;
-                gv.DataBind();
+                gvNotes.DataSource = dt;
+                gvNotes.DataBind();
             }
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            var ddl = (System.Web.UI.WebControls.DropDownList)FindControl("ddlAppointment");
-            var txtNote = (System.Web.UI.WebControls.TextBox)FindControl("txtNote");
-            var lblMessage = (System.Web.UI.WebControls.Label)FindControl("lblMessage");
-            var lblAppointmentError = (System.Web.UI.WebControls.Label)FindControl("lblAppointmentError");
-            var lblNoteError = (System.Web.UI.WebControls.Label)FindControl("lblNoteError");
-
             lblAppointmentError.Text = "";
             lblNoteError.Text = "";
             lblMessage.Text = "";
 
             bool isValid = true;
 
-            if (string.IsNullOrEmpty(ddl.SelectedValue))
-            { lblAppointmentError.Text = "Please select an appointment."; isValid = false; }
+            if (string.IsNullOrEmpty(ddlAppointment.SelectedValue))
+            {
+                lblAppointmentError.Text = "Please select an appointment.";
+                isValid = false;
+            }
 
             if (string.IsNullOrWhiteSpace(txtNote.Text))
-            { lblNoteError.Text = "Note cannot be empty."; isValid = false; }
+            {
+                lblNoteError.Text = "Note cannot be empty.";
+                isValid = false;
+            }
 
             if (!isValid) return;
 
-            string connStr = ConfigurationManager
-                .ConnectionStrings["ClinicDBConnection"].ConnectionString;
+            string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = "UPDATE Appointments SET Notes=@Notes WHERE AppointmentID=@ID";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Notes", txtNote.Text.Trim());
-                cmd.Parameters.AddWithValue("@ID", ddl.SelectedValue);
+                cmd.Parameters.AddWithValue("@ID", ddlAppointment.SelectedValue);
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
 
                 lblMessage.Text = "Note saved successfully!";
-                lblMessage.ForeColor = System.Drawing.Color.LightGreen;
+                lblMessage.ForeColor = System.Drawing.Color.SpringGreen;
                 txtNote.Text = "";
             }
 
