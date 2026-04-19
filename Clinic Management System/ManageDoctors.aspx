@@ -2,10 +2,10 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <style>
-        /* إخفاء إضافات الفيجوال ستوديو */
+        /* hide default */
         nav, .navbar, footer, hr, #footer { display: none !important; }
         
-        /* الشاشة الخلفية وتثبيت الكرت في النص */
+        /* fullscreen background  */
         .my-glass-wrapper {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(135deg, #0f172a, #1d4ed8, #38bdf8) !important;
@@ -13,14 +13,14 @@
             z-index: 99999;
         }
 
-        /* 🌟 الكرت بالحجم الممتاز اللي عجبك قبل شوي 🌟 */
+        /* main glassmorphism card */
         .my-glass-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
             padding: 40px 50px;
-            width: 850px; /* العرض المثالي اللي ما يمطط الشاشة */
+            width: 850px; 
             max-width: 95%;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             font-family: 'Segoe UI', Tahoma, sans-serif;
@@ -28,7 +28,7 @@
             box-sizing: border-box;
         }
 
-        /* شبكة الحقول (عمودين) */
+        /* tow-column grid layout */
         .fields-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -46,13 +46,13 @@
             font-weight: 600;
             margin-bottom: 8px;
             font-size: 15px;
-            margin-left: 15px; /* عشان يتوازى مع الدوران الجديد */
+            margin-left: 15px; 
         }
 
-        /* 🌟 السر هنا: المربعات البيضاء صارت بيضاوية (كبسولة) 🌟 */
+        /* rounded capsule inputes*/
         .my-input {
-            padding: 12px 25px; /* زدنا المساحة من اليمين واليسار عشان الدوران */
-            border-radius: 50px !important; /* شكل بيضاوي بالكامل */
+            padding: 12px 25px; 
+            border-radius: 50px !important; 
             border: none;
             outline: none;
             font-size: 15px;
@@ -73,11 +73,11 @@
             background-size: 16px !important;
             padding-right: 45px !important;
         }
-        /* لإخفاء السهم القديم لو كان متصفحك يعتمد على محرك إنترنت إكسبلورر */
+
         select.my-input::-ms-expand {
             display: none !important;
         }
-        /* شبكة الأزرار الثلاثة (جنب بعض) */
+      
         .buttons-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr; 
@@ -86,10 +86,10 @@
             width: 100%;
         }
 
-        /* 🌟 الأزرار كمان خليناها بيضاوية عشان الطقم يكمل 🌟 */
+       
         .my-btn {
             padding: 14px;
-            border-radius: 50px !important; /* شكل بيضاوي */
+            border-radius: 50px !important; 
             border: none;
             color: white;
             font-weight: bold;
