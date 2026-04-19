@@ -19,7 +19,7 @@ namespace Clinic_Management_System
 
             string role = Session["Role"].ToString().ToLower();
 
-            // 🛡️ حماية إضافية: لو دكتور حاول يدخل الصفحة من الرابط يدوياً، نرجعه للداشبورد
+            
             if (role == "doctor")
             {
                 Response.Redirect("Dashboard.aspx");
@@ -30,12 +30,12 @@ namespace Clinic_Management_System
             {
                 LoadDoctors();
 
-                // 🌟 قفل الاسم على المريض
+                
                 if (role == "patient")
                 {
                     txtPatientName.Text = Session["Username"].ToString();
                     txtPatientName.ReadOnly = true;
-                    txtPatientName.Style["background-color"] = "#e2e8f0"; // نعطيه لون رمادي خفيف عشان يبين إنه مقفل
+                    txtPatientName.Style["background-color"] = "#e2e8f0"; 
                 }
             }
         }
@@ -112,8 +112,8 @@ namespace Clinic_Management_System
                     return;
                 }
 
-                // 🌟 (ملاحظة: ما نحتاج نضيف CreatedAt هنا لأن الداتابيز بتعبيها تلقائياً بفضل الـ Default اللي سويناه)
-                // 🌟 جملة الإدخال بعد إضافة PaymentStatus
+               
+               
                 string insertQuery = @"INSERT INTO Appointments (PatientName, Email, Phone, AppointmentDate, AppointmentTime, DoctorName, Department, AppointmentType, AdditionalService, ConsultationFee, Status, PaymentStatus) 
 VALUES (@PatientName, @Email, @Phone, @AppointmentDate, @AppointmentTime, @DoctorName, @Department, @AppointmentType, @AdditionalService, @ConsultationFee, @Status, @PaymentStatus)";
 
@@ -172,7 +172,7 @@ VALUES (@PatientName, @Email, @Phone, @AppointmentDate, @AppointmentTime, @Docto
         {
             string role = Session["Role"]?.ToString().ToLower() ?? "";
 
-            // 🌟 الحل السحري: لا تمسح اسم المريض عشان يقدر يحجز موعد ثاني!
+            
             if (role != "patient")
             {
                 txtPatientName.Text = "";
@@ -247,7 +247,7 @@ VALUES (@PatientName, @Email, @Phone, @AppointmentDate, @AppointmentTime, @Docto
             {
                 conn.Open();
 
-                // 1. أولاً: نشيك هل فيه "عرض خاص" لهذا القسم اليوم؟
+                
                 string specialQuery = "SELECT FeeAmount FROM SpecialFees WHERE TRIM(Department) = @Dept AND CAST(SpecialDate AS DATE) = @Date";
                 SqlCommand cmdSpecial = new SqlCommand(specialQuery, conn);
                 cmdSpecial.Parameters.AddWithValue("@Dept", txtDepartment.Text.Trim());
@@ -266,7 +266,7 @@ VALUES (@PatientName, @Email, @Phone, @AppointmentDate, @AppointmentTime, @Docto
                     }
                 }
 
-                // 2. إذا ما لقينا عرض، نسحب السعر الطبيعي للدكتور
+              
                 if (baseFee == 0)
                 {
                     string doctorQuery = "SELECT ConsultationFee FROM Doctors WHERE DoctorName = @DocName";
@@ -278,12 +278,11 @@ VALUES (@PatientName, @Email, @Phone, @AppointmentDate, @AppointmentTime, @Docto
                 }
             }
 
-            // 3. الحين نجمع الخدمات الإضافية (لو عندك منطق زيادة ضيفيه هنا)
+            
             decimal total = baseFee;
-            if (ddlAppointmentType.SelectedValue == "Urgent Consultation") total += 50; // مثال لو المستعجل أغلى
-            if (ddlService.SelectedValue == "Lab Test") total += 100; // مثال سعر المختبر
-
-            // 4. عرض السعر النهائي
+            if (ddlAppointmentType.SelectedValue == "Urgent Consultation") total += 50; 
+            if (ddlService.SelectedValue == "Lab Test") total += 100; 
+            
             txtConsultationFee.Text = total.ToString("0.00");
         }
         protected void txtDate_TextChanged(object sender, EventArgs e)
@@ -295,7 +294,7 @@ VALUES (@PatientName, @Email, @Phone, @AppointmentDate, @AppointmentTime, @Docto
 
             try
             {
-                // 🌟 السطر المنقذ: تعريف connStr داخل الدالة عشان يختفي الإيرور 🌟
+                
                 string connStr = System.Configuration.ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
 
                 using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connStr))

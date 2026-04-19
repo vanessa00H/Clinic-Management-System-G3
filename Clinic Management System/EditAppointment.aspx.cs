@@ -38,7 +38,7 @@ namespace Clinic_Management_System
                     phStatus.Visible = true;
                 }
 
-                // لازم نحمل أسماء الدكاترة أول شيء قبل لا نعرض بيانات الموعد
+               
                 LoadDoctors();
                 LoadAppointment();
             }
@@ -49,7 +49,7 @@ namespace Clinic_Management_System
             string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                // نجيب الدكاترة المتاحين بس
+                
                 string query = "SELECT DoctorName, Department FROM Doctors WHERE IsAvailable = 1";
                 SqlDataAdapter da = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
@@ -57,7 +57,7 @@ namespace Clinic_Management_System
 
                 ddlDoctor.DataSource = dt;
                 ddlDoctor.DataTextField = "DoctorName";
-                ddlDoctor.DataValueField = "DoctorName"; // بنستخدم الاسم كقيمة عشان الداتابيز حقتنا تحفظ الاسم
+                ddlDoctor.DataValueField = "DoctorName"; 
                 ddlDoctor.DataBind();
                 ddlDoctor.Items.Insert(0, new System.Web.UI.WebControls.ListItem("Select Doctor", ""));
             }
@@ -71,7 +71,7 @@ namespace Clinic_Management_System
                 return;
             }
 
-            // إذا تغير الدكتور، نجيب القسم حقه من الداتابيز ونعبي المربع
+            
             string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
             using (SqlConnection conn = new SqlConnection(connStr))
             {
@@ -112,7 +112,7 @@ namespace Clinic_Management_System
                     txtTime.Text = reader["AppointmentTime"].ToString();
                     ddlStatus.SelectedValue = reader["Status"].ToString();
 
-                    // 🌟 سحبنا بيانات الدكتور والقسم والخدمة وعرضناها
+                    
                     string docName = reader["DoctorName"].ToString();
                     if (ddlDoctor.Items.FindByValue(docName) != null)
                     {
@@ -148,7 +148,7 @@ namespace Clinic_Management_System
             if (!System.Text.RegularExpressions.Regex.IsMatch(txtEmail.Text, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             { lblEmailError.Text = "Enter a valid email."; isValid = false; }
 
-            // عدلتها لـ 8 أو 10 أرقام عشان ما تضرب عليك بناءً على طول الرقم اللي تدخلينه
+            
             if (string.IsNullOrWhiteSpace(txtPhone.Text))
             { lblPhoneError.Text = "Phone is required."; isValid = false; }
 
@@ -178,7 +178,7 @@ namespace Clinic_Management_System
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = conn;
 
-                // 🌟 حدثنا جملة SQL عشان تحفظ التعديلات الجديدة حق الدكتور والخدمات
+               
                 if (phStatus.Visible == false)
                 {
                     query = @"UPDATE Appointments 

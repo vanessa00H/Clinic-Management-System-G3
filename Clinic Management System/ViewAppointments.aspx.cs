@@ -9,7 +9,7 @@ namespace Clinic_Management_System
 {
     public partial class ViewAppointments : System.Web.UI.Page
     {
-        // سطر التعريف لضمان عدم ظهور إيرور CS0103 في الليبل
+        
         protected global::System.Web.UI.WebControls.Label lblMessage;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -28,7 +28,7 @@ namespace Clinic_Management_System
             }
         }
 
-        // --- ميثودات تحميل البيانات (تم دمجها لتعمل مباشرة) ---
+       
         private void LoadDoctors()
         {
             string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
@@ -93,10 +93,10 @@ namespace Clinic_Management_System
             }
         }
 
-        // --- 🌟 الجزء الخاص بالأزرار والإشعارات (هنا التعديل المهم) ---
+        
         protected void gvAppointments_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
         {
-            // تعريف الـ id هنا في البداية يحل كل مشاكل CS0103
+            
             string id = e.CommandArgument.ToString();
 
             if (e.CommandName == "EditApp")
@@ -166,7 +166,7 @@ namespace Clinic_Management_System
                         MailMessage mail = new MailMessage("ghaidasalem71@gmail.com", email, subject, body);
                         smtp.Send(mail);
 
-                        // رسالة نجاح تظهر في الشاشة
+                      
                         if (lblMessage != null)
                         {
                             lblMessage.Text = "✅ Notification sent to " + email;
@@ -177,7 +177,7 @@ namespace Clinic_Management_System
             }
             catch (Exception ex)
             {
-                // إذا فشل الإرسال، تطلع الرسالة هنا وما ينهار السيستم
+               
                 if (lblMessage != null)
                 {
                     lblMessage.Text = "❌ Mail Error: " + ex.Message;
@@ -186,7 +186,7 @@ namespace Clinic_Management_System
             }
         }
 
-        // --- أزرار الفلترة ---
+        
         protected void btnFilter_Click(object sender, EventArgs e)
         {
             var ddlS = (System.Web.UI.WebControls.DropDownList)FindControl("ddlFilterStatus");
