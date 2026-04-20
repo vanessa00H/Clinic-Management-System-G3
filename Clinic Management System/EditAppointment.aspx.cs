@@ -29,18 +29,16 @@ namespace Clinic_Management_System
         {
             if (!IsPostBack)
             {
-                if (Session["Role"] != null && Session["Role"].ToString() == "Patient")
-                {
-                    phStatus.Visible = false;
-                }
-                else
-                {
-                    phStatus.Visible = true;
-                }
-
-               
                 LoadDoctors();
                 LoadAppointment();
+            }
+            else
+            {
+                
+                if (Request["__EVENTTARGET"] == "ddlDoctor")
+                {
+                    ddlDoctor_SelectedIndexChanged(null, null);
+                }
             }
         }
 

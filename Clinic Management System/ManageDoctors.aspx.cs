@@ -10,18 +10,18 @@ namespace Clinic_Management_System
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // تأكدنا إن الحرف الأول كابيتال أو سمول يمشي
+           
             if (Session["Role"]?.ToString().ToLower() != "admin")
             {
                 Response.Redirect("Dashboard.aspx");
             }
         }
 
-        // ميزة التعبئة التلقائية عند كتابة الاسم
+       
         protected void txtDoctorName_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtDoctorName.Text)) return;
-
+            
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query = "SELECT * FROM Doctors WHERE DoctorName = @Name";
@@ -32,6 +32,7 @@ namespace Clinic_Management_System
 
                 if (reader.Read())
                 {
+                    ViewState["OldName"] = txtDoctorName.Text.Trim();
                     txtSpecialization.Text = reader["Specialization"].ToString();
                     txtDepartment.Text = reader["Department"].ToString();
                     txtFee.Text = reader["ConsultationFee"].ToString();
@@ -41,12 +42,18 @@ namespace Clinic_Management_System
                 }
                 else
                 {
-                    // إذا لم يجد الاسم، يمسح الحقول للاستعداد للإضافة
-                    txtSpecialization.Text = "";
-                    txtDepartment.Text = "";
-                    txtFee.Text = "";
-                    lblMessage.Text = "New Doctor Name. Ready to Add.";
-                    lblMessage.ForeColor = System.Drawing.Color.White;
+                    
+                    if (string.IsNullOrWhiteSpace(txtSpecialization.Text) &&
+                        string.IsNullOrWhiteSpace(txtDepartment.Text))
+                    {
+                        lblMessage.Text = "New Doctor Name. Ready to Add.";
+                        lblMessage.ForeColor = System.Drawing.Color.White;
+                    }
+                    else
+                    {
+                        lblMessage.Text = "Editing doctor name. Click Update to save.";
+                        lblMessage.ForeColor = System.Drawing.Color.Yellow;
+                    }
                 }
             }
         }
@@ -55,10 +62,30 @@ namespace Clinic_Management_System
         {
             ExecuteQuery("INSERT INTO Doctors (DoctorName, Specialization, Department, ConsultationFee, IsAvailable) VALUES (@Name, @Spec, @Dept, @Fee, @Avail)", "Added Successfully!");
         }
-
+        
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
-            ExecuteQuery("UPDATE Doctors SET Specialization=@Spec, Department=@Dept, ConsultationFee=@Fee, IsAvailable=@Avail WHERE DoctorName=@Name", "Updated Successfully!");
+            string oldName = ViewState["OldName"]?.ToString() ?? txtDoctorName.Text.Trim();
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = "UPDATE Doctors SET DoctorName=@NewName, Specialization=@Spec, Department=@Dept, ConsultationFee=@Fee, IsAvailable=@Avail WHERE DoctorName=@OldName";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@OldName", oldName);
+                cmd.Parameters.AddWithValue("@NewName", txtDoctorName.Text.Trim());
+                cmd.Parameters.AddWithValue("@Spec", txtSpecialization.Text.Trim());
+                cmd.Parameters.AddWithValue("@Dept", txtDepartment.Text.Trim());
+                cmd.Parameters.AddWithValue("@Fee", decimal.Parse(txtFee.Text.Trim()));
+                cmd.Parameters.AddWithValue("@Avail", ddlAvailable.SelectedValue);
+                conn.Open();
+                int rows = cmd.ExecuteNonQuery();
+                if (rows > 0)
+                {
+                    lblMessage.Text = "Updated Successfully!";
+                    lblMessage.ForeColor = System.Drawing.Color.SpringGreen;
+                    ViewState["OldName"] = txtDoctorName.Text.Trim();
+                }
+            }
         }
 
         protected void btnDelete_Click(object sender, EventArgs e)
@@ -74,7 +101,7 @@ namespace Clinic_Management_System
 
             using (SqlConnection conn = new SqlConnection(connStr))
             {
-                // 🌟 1. التفتيش اليدوي: هل الدكتور عنده مواعيد؟
+                
                 string checkQuery = "SELECT COUNT(*) FROM Appointments WHERE DoctorName = @Name";
                 SqlCommand checkCmd = new SqlCommand(checkQuery, conn);
                 checkCmd.Parameters.AddWithValue("@Name", docName);
@@ -82,15 +109,15 @@ namespace Clinic_Management_System
                 conn.Open();
                 int appCount = (int)checkCmd.ExecuteScalar();
 
-                // إذا عنده مواعيد (أكثر من صفر)، نوقف الحذف فوراً!
+               
                 if (appCount > 0)
                 {
                     lblMessage.Text = $"Cannot delete! This doctor has {appCount} booked appointment(s). Please set to 'Unavailable' instead.";
                     lblMessage.ForeColor = System.Drawing.Color.Red;
-                    return; // هذي توقف الكود وما تخليه يكمل للحذف
+                    return; 
                 }
 
-                // 🌟 2. إذا طلع نظيف وما عنده مواعيد، نحذفه بأمان
+                
                 string deleteQuery = "DELETE FROM Doctors WHERE DoctorName = @Name";
                 SqlCommand deleteCmd = new SqlCommand(deleteQuery, conn);
                 deleteCmd.Parameters.AddWithValue("@Name", docName);
@@ -101,7 +128,7 @@ namespace Clinic_Management_System
                     lblMessage.Text = "Deleted Successfully!";
                     lblMessage.ForeColor = System.Drawing.Color.SpringGreen;
 
-                    // تنظيف الخانات بعد الحذف
+                    
                     txtDoctorName.Text = "";
                     txtSpecialization.Text = "";
                     txtDepartment.Text = "";
@@ -112,7 +139,7 @@ namespace Clinic_Management_System
 
         private void ExecuteQuery(string query, string successMsg)
         {
-            // 🛡️ حماية 1: التأكد من كتابة الاسم
+            
             if (string.IsNullOrWhiteSpace(txtDoctorName.Text))
             {
                 lblMessage.Text = "Please enter a Doctor Name.";
@@ -120,7 +147,7 @@ namespace Clinic_Management_System
                 return;
             }
 
-            // 🛡️ حماية 2: التأكد إن السعر رقم صحيح (فقط في حال الإضافة والتعديل)
+            
             decimal fee = 0;
             if (!query.Contains("DELETE") && !decimal.TryParse(txtFee.Text.Trim(), out fee))
             {
@@ -157,8 +184,8 @@ namespace Clinic_Management_System
             }
             catch (SqlException ex)
             {
-                // 🛡️ حماية 3: منع انهيار النظام إذا حاولنا نحذف دكتور عنده مواعيد
-                if (ex.Number == 547) // 547 هو كود الخطأ حق الـ Foreign Key
+               
+                if (ex.Number == 547) 
                 {
                     lblMessage.Text = "Cannot delete this doctor! They have booked appointments. Please set them as 'Unavailable' instead.";
                     lblMessage.ForeColor = System.Drawing.Color.Red;

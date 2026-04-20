@@ -82,6 +82,22 @@ namespace Clinic_Management_System
                     date = Convert.ToDateTime(reader["AppointmentDate"]).ToString("dd/MM/yyyy");
                 }
             }
+            // check if appointment is cancelled
+            string status = "";
+            using (SqlConnection conn2 = new SqlConnection(connStr))
+            {
+                SqlCommand cmd2 = new SqlCommand("SELECT Status FROM Appointments WHERE AppointmentID=@ID", conn2);
+                cmd2.Parameters.AddWithValue("@ID", ddlAppointment.SelectedValue);
+                conn2.Open();
+                status = cmd2.ExecuteScalar()?.ToString() ?? "";
+            }
+
+            if (status == "Cancelled" && ddlType.SelectedValue != "Cancelled")
+            {
+                lblMessage.ForeColor = System.Drawing.Color.Red;
+                lblMessage.Text = "❌ Cannot send this notification. Appointment is Cancelled.";
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(email))
             {

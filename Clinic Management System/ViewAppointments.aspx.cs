@@ -9,8 +9,11 @@ namespace Clinic_Management_System
 {
     public partial class ViewAppointments : System.Web.UI.Page
     {
-        
-        protected global::System.Web.UI.WebControls.Label lblMessage;
+
+        private System.Web.UI.WebControls.Label GetMessageLabel()
+        {
+            return (System.Web.UI.WebControls.Label)FindControl("lblMessage");
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -28,7 +31,7 @@ namespace Clinic_Management_System
             }
         }
 
-       
+
         private void LoadDoctors()
         {
             string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
@@ -93,10 +96,10 @@ namespace Clinic_Management_System
             }
         }
 
-        
+
         protected void gvAppointments_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
         {
-            
+
             string id = e.CommandArgument.ToString();
 
             if (e.CommandName == "EditApp")
@@ -105,17 +108,77 @@ namespace Clinic_Management_System
             }
             else if (e.CommandName == "CancelApp")
             {
-                UpdateAppointmentStatus(id, "Status", "Cancelled");
-                SendAutomaticEmail(id, "Cancelled");
+                // check appointment date before allowing cancellation
+                string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
+                DateTime appointmentDate = DateTime.MinValue;
+
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    SqlCommand cmd = new SqlCommand("SELECT AppointmentDate FROM Appointments WHERE AppointmentID=@ID", conn);
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                        appointmentDate = Convert.ToDateTime(result);
+                }
+
+                // Allow cancellation only if appointment is more than 24 hours away
+                // This is a common policy to prevent last-minute cancellations and allow the clinic to manage schedules effectively.
+                if (appointmentDate <= DateTime.Now || (appointmentDate - DateTime.Now).TotalHours < 24)
+                {
+                    var lbl = GetMessageLabel();
+                    if (lbl != null)
+                    {
+                        lbl.Text = "❌ Cannot cancel! Appointment is within 24 hours. Please contact the clinic directly.";
+                        lbl.ForeColor = System.Drawing.Color.Red;
+                    }
+                }
+                else
+                {
+                    UpdateAppointmentStatus(id, "Status", "Cancelled");
+                    SendAutomaticEmail(id, "Cancelled");
+                    var lbl = GetMessageLabel();
+                    if (lbl != null)
+                    {
+                        lbl.Text = "✅ Appointment cancelled successfully.";
+                        lbl.ForeColor = System.Drawing.Color.SpringGreen;
+                    }
+                }
             }
             else if (e.CommandName == "PayApp")
             {
+                // check current status before marking as paid
+                string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
+                string currentStatus = "";
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    SqlCommand cmd = new SqlCommand("SELECT Status FROM Appointments WHERE AppointmentID=@ID", conn);
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    conn.Open();
+                    currentStatus = cmd.ExecuteScalar()?.ToString() ?? "";
+                }
+
                 UpdateAppointmentStatus(id, "PaymentStatus", "Paid");
-                SendAutomaticEmail(id, "Paid (Payment Received)");
+
+                if (currentStatus != "Cancelled")
+                    SendAutomaticEmail(id, "Paid (Payment Received)");
             }
             else if (e.CommandName == "RemindApp")
             {
                 SendAutomaticEmail(id, "Reminder: Your appointment is approaching!");
+            }
+            else if (e.CommandName == "DeleteApp")
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["ClinicDBConnection"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    string query = "DELETE FROM Appointments WHERE AppointmentID=@ID";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                LoadAppointments();
             }
         }
 
@@ -166,27 +229,28 @@ namespace Clinic_Management_System
                         MailMessage mail = new MailMessage("ghaidasalem71@gmail.com", email, subject, body);
                         smtp.Send(mail);
 
-                      
-                        if (lblMessage != null)
+
+                        var lbl = GetMessageLabel();
+                        if (lbl != null)
                         {
-                            lblMessage.Text = "✅ Notification sent to " + email;
-                            lblMessage.ForeColor = System.Drawing.Color.SpringGreen;
+                            lbl.Text = "✅ Notification sent to " + email;
+                            lbl.ForeColor = System.Drawing.Color.SpringGreen;
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-               
-                if (lblMessage != null)
+                var lbl = GetMessageLabel();
+                if (lbl != null)
                 {
-                    lblMessage.Text = "❌ Mail Error: " + ex.Message;
-                    lblMessage.ForeColor = System.Drawing.Color.Yellow;
+                    lbl.Text = "❌ Mail Error: " + ex.Message;
+                    lbl.ForeColor = System.Drawing.Color.Yellow;
                 }
             }
         }
 
-        
+
         protected void btnFilter_Click(object sender, EventArgs e)
         {
             var ddlS = (System.Web.UI.WebControls.DropDownList)FindControl("ddlFilterStatus");
@@ -203,5 +267,7 @@ namespace Clinic_Management_System
         {
             LoadAppointments();
         }
+
+
     }
 }

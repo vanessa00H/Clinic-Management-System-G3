@@ -86,7 +86,8 @@
                     <asp:Button ID="btnFilter" runat="server" Text="Filter" CssClass="filter-btn" OnClick="btnFilter_Click" />
                     <asp:Button ID="btnReset" runat="server" Text="Reset" CssClass="filter-btn" OnClick="btnReset_Click" />
                 </div>
-
+                <asp:Label ID="lblMessage" runat="server" 
+    Style="display:block; margin-bottom:15px; font-weight:bold;" />
                 <asp:GridView ID="gvAppointments" runat="server"
     AutoGenerateColumns="False"
     CssClass="grid"
@@ -115,26 +116,34 @@
                     CommandArgument='<%# Eval("AppointmentID") %>'
                     Text="Pay"
                     Visible='<%# Eval("PaymentStatus").ToString() == "Unpaid" && Session["Role"] != null && Session["Role"].ToString().ToLower() != "patient" %>'
-                    Style="color:#22c55e; font-weight:700; margin-right:10px; text-decoration:none;" />
+                    Style="color:#1d4ed8; font-weight:700; margin-right:10px; text-decoration:none;" />
 
                 <asp:LinkButton CommandName="EditApp"
                     CommandArgument='<%# Eval("AppointmentID") %>'
                     runat="server"
-                    Style="color: #38bdf8; font-weight: 700; margin-right: 10px; text-decoration:none;">
+                    Style="color: #45de28; font-weight: 700; margin-right: 10px; text-decoration:none;">
                     Edit
                 </asp:LinkButton>
                 
                 <asp:LinkButton CommandName="CancelApp"
                     CommandArgument='<%# Eval("AppointmentID") %>'
                     runat="server"
-                    Style="color: #f87171; font-weight: 700; text-decoration:none;"
+                    Style="color: #690094; font-weight: 700; text-decoration:none;"
                     OnClientClick="return confirm('Are you sure you want to cancel?');">
                     Cancel
                 </asp:LinkButton>
+                <asp:LinkButton CommandName="DeleteApp"
+                 CommandArgument='<%# Eval("AppointmentID") %>'
+                  runat="server"
+                 Style="color: #ff0000; font-weight: 700; text-decoration:none; margin-right:10px;"
+                 OnClientClick="return confirm('Are you sure you want to delete?');">
+    Delete
+</asp:LinkButton>
             </ItemTemplate>
         </asp:TemplateField>
     </Columns>
 </asp:GridView>
+
 
                 <a class="back-link" href="Dashboard.aspx">Back to Dashboard</a>
             </div>
